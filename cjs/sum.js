@@ -1,8 +1,8 @@
-function sum(a, b) {
-  return a + b;
+function sum (a, b) {
+  return a + b
 }
 
-//CommonJS export syntax
+// CommonJS export syntax
 module.exports = {
-  sum: sum,
-};
+  sum
+}

@@ -1,4 +1,4 @@
-//CommonJs require syntax:
-const { sum } = require("./sum");
+// CommonJs require syntax:
+const { sum } = require('./sum')
 
-console.log(sum(4, 8));
+console.log(sum(4, 8))
