@@ -1,10 +1,35 @@
 const express = require('express') // require -> commonJS
 const movies = require('./movie.json')
 const crypto = require('node:crypto')
+const cors = require('cors')
+
 const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 
 const app = express()
 app.use(express.json())
+app.use(cors({
+  origin: (origin, callback) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:8000',
+      'http://localhost:1234',
+      'http://movies.com',
+      'http://localhost:5500',
+      'http://127.0.0.1:5500'
+    ]
+
+    if (ACCEPTED_ORIGINS.includes(origin)) {
+      return callback(null, true)
+    }
+
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    return callback(new Error('Not allowed by CORS'))
+  }
+}
+
+))
 app.disable('x-powered-by')
 
 // metodos normales: GET/HEAD/POST
@@ -15,7 +40,6 @@ app.disable('x-powered-by')
 
 // todos los recursos que sean movies
 app.get('/movies', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
   const { genre } = req.query
   if (genre) {
     const filteredMovies = movies.filter(
@@ -79,14 +103,7 @@ app.patch('/movies/:id', (req, res) => {
   return res.json(updateMovie)
 })
 
-app.options('/movies/:id', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE')
-  res.send(200)
-})
-
 app.delete('/movies/:id', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
   const { id } = req.params
   const movieIndex = movies.findIndex(movie => movie.id === id)
 
